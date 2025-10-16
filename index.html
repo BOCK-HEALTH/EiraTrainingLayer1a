@@ -1,3 +1,5 @@
+<!-- Local testing of the frontend with local Flask backend -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,9 +69,13 @@
     </div>
 
     <script>
-        // --- IMPORTANT ---
-        // Paste the Invoke URL you got from API Gateway here.
-        const API_GATEWAY_URL = "https://oof3aorb56.execute-api.ap-south-1.amazonaws.com/prod/links";
+    // --- IMPORTANT ---
+    // For local testing, use the local Flask endpoint:
+    // const API_GATEWAY_URL = "http://127.0.0.1:5001/api/lambda"; // Lambda logic
+    // Or, to test the video links endpoint directly:
+    // const API_GATEWAY_URL = "http://127.0.0.1:5000/api/video-links";
+    // Uncomment the one you want to test:
+    const API_GATEWAY_URL = "http://127.0.0.1:5001/api/lambda";
 
         // DOM Elements
         const getLinksBtn = document.getElementById('getLinksBtn');
@@ -119,20 +125,28 @@
                     body: JSON.stringify({ channelId: channelId }),
                 });
 
-                const data = await response.json();
+                let data = await response.json();
 
                 if (!response.ok) {
                     // If the server returned an error, display it
                     throw new Error(data.error || `Request failed with status ${response.status}`);
                 }
 
+                // Handle Lambda-style response with stringified body
+                if (typeof data.body === "string") {
+                    data = JSON.parse(data.body);
+                }
+
                 const { channelTitle, videoCount, links } = data;
+                if (!links || !Array.isArray(links)) {
+                    throw new Error(data.error || "No video links found.");
+                }
                 currentChannelName = channelTitle; // Store for download
 
                 resultsHeader.textContent = `Links for ${channelTitle}`;
                 videoLinksTextarea.value = links.join('\n');
                 resultsContainer.classList.remove('hidden');
-                updateStatus(`Successfully found ${videoCount} video links for "${channelTitle}".`, 'success');
+                updateStatus(`Successfully found ${videoCount} video links for \"${channelTitle}\".`, 'success');
 
             } catch (error) {
                 console.error('An error occurred:', error);

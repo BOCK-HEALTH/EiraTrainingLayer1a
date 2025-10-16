@@ -1,0 +1,9 @@
+lambda_function_name = "youtubeLinkExtractor"
+lambda_handler = "lambda_function.lambda_handler"
+lambda_runtime = "python3.12"
+lambda_timeout = 60
+youtube_api_key = "AIzaSyBvSYm4TBbwCZUwpp_306UuXbkbB6NBZcE"
+api_gateway_name = "youtube-api"
+api_resource_path = "links"
+api_stage_name = "prod"
+aws_region = "ap-south-1"

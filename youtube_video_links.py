@@ -5,7 +5,6 @@ import requests
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
 
-# hello bro
 class YouTubeScraper:
     def __init__(self, api_key: str):
         self.api_key = api_key
